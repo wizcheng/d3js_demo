@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>d3.js</title>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+</head>
+<body>
+
+<svg width="300" height="300">
+    <!--<rect cx="10" cy="10" height="100" width="30" style="fill: blue"/>-->
+    <circle r="20" cx="60" cy="60" style="fill: red"/>
+</svg>
+
+<div id="output">
+</div>
+
+<script>
+
+//d3.select("#output")
+//    .append("svg")
+//    .append("rect")
+//        .attr("cx", 10)
+//        .attr("cy", 10)
+//        .attr("height", 100)
+//        .attr("width", 30)
+//        .attr("fill", "blue")
+
+var sales = [3, 4, 5, 6, 3, 4, 8, 2]
+
+d3.select("#output")
+        .append("svg")
+        .append("circle")
+        .attr("cx", 60)
+        .attr("cy", 60)
+        .attr("r", 20)
+        .attr("fill", "red")
+
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>d3.js</title>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+</head>
+<body>
+
+<!--<svg width="300" height="100">-->
+    <!--<path d="M11,60L22,50L33,40L44,70L55,60L66,30L77,50L88,40L99,30L110,70" fill="none" stroke-width="3" stroke="gray"/>-->
+<!--</svg>-->
+
+
+<div id="output">
+</div>
+
+<script>
+
+var data = [
+    { key: 1, value: 4},
+    { key: 2, value: 5},
+    { key: 3, value: 6},
+    { key: 4, value: 3},
+    { key: 5, value: 4},
+    { key: 6, value: 7},
+    { key: 7, value: 5},
+    { key: 8, value: 6},
+    { key: 9, value: 7},
+    { key: 10, value: 3}
+];
+
+var w = 300;
+var h = 100;
+
+var svg = d3.select("#output")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h);
+
+var lineFn = d3.svg.line()
+        .x(function(d){ return d.key * 11 })
+        .y(function(d){ return h - d.value * 10})
+        .interpolate("linear")
+        ;
+
+svg.append("path")
+        .attr("d", lineFn(data))
+        .attr("fill", "none")
+        .attr("stroke-width", 3)
+        .attr("stroke", "gray");
+
+
+
+
+</script>
+
+
+</body>
+</html>
