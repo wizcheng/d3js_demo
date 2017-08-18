@@ -22,7 +22,7 @@ var data = [
     { key: 2, value: 5},
     { key: 3, value: 6},
     { key: 4, value: 3},
-    { key: 5, value: 4},
+    { key: 5, value: 2},
     { key: 6, value: 7},
     { key: 7, value: 5},
     { key: 8, value: 6},
@@ -36,13 +36,26 @@ var h = 100;
 var svg = d3.select("#output")
             .append("svg")
             .attr("width", w)
-            .attr("height", h);
+            .attr("height", h)
+            .style("background-color", "#eeeeee");
 
 var lineFn = d3.svg.line()
         .x(function(d){ return d.key * 11 })
         .y(function(d){ return h - d.value * 10})
         .interpolate("linear")
         ;
+
+//var yMin = 0;
+//var yMax = d3.max(data, function(d){ return d.value; });
+//
+//var xMin = 0;
+//var xMax = d3.max(data, function(d){ return d.key; });
+//
+//var lineFn = d3.svg.line()
+//        .x(function(d){ return (d.key - 1) * (w / (data.length-1)); })
+//        .y(function(d){ return h - (d.value / yMax) * h; })
+//        .interpolate("linear")
+//        ;
 
 svg.append("path")
         .attr("d", lineFn(data))

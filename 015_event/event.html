@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>d3.js</title>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+</head>
+<style>
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: black;
+        shape-rendering: crispEdges;
+    }
+
+    .axis text {
+        font-family: sans-serif;
+        font-size: 10px;
+    }
+
+</style>
+<body>
+
+<div id="output">
+</div>
+
+<script>
+
+var data = [
+    { key: 1, value: 4},
+    { key: 2, value: 5},
+    { key: 3, value: 6},
+    { key: 4, value: 3},
+    { key: 5, value: 2},
+    { key: 6, value: 7},
+    { key: 7, value: 5},
+    { key: 8, value: 6},
+    { key: 9, value: 7},
+    { key: 10, value: 3}
+];
+
+var w = 500;
+var h = 200;
+
+var svg = d3.select("#output")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h)
+            .style("background-color", "#eeeeee");
+
+var padding = 50;
+
+var xMin = d3.min(data, function(d){ return d.key; });
+var xMax = d3.max(data, function(d){ return d.key; });
+var xWidth = (w - 2 * padding) / data.length;
+var xScale = d3.scale.linear()
+        .domain([xMin, xMax])
+        .range([padding, w - xWidth - padding]);
+
+var yMin = 0;
+var yMax = d3.max(data, function(d){ return d.value; });
+var yScale = d3.scale.linear()
+        .domain([yMin, yMax])
+        .range([h-padding, padding]);
+var heightScale = d3.scale.linear()
+        .domain([yMin, yMax])
+        .range([0, h - 2*padding]);
+
+svg.selectAll("rect")
+        .data(data)
+        .enter()
+        .append("rect")
+        .attr("x", function(d){ return xScale(d.key) - xWidth/2 ; })
+        .attr("y", function(d){ return yScale(d.value); })
+        .attr("width", xWidth - 2)
+        .attr("height", function(d){ return heightScale(d.value) })
+        .attr("fill", "gray")
+        .on("mouseover", function(d) {
+            d3.select(this).attr("fill", "orange");
+        })
+        .on("mouseout", function(d) {
+            d3.select(this).attr("fill", "gray");
+        })
+;
+
+var xAxisGen = d3.svg.axis()
+        .scale(xScale).orient("bottom");
+
+var yAxisGen = d3.svg.axis()
+        .scale(yScale).orient("left").ticks(4);
+
+var padding = 10;
+
+var yAxis = svg.append("g").call(yAxisGen)
+        .attr("class", "axis")
+        .attr("transform", "translate(" + (xScale(xMin) - xWidth/2) + ", 0)");
+
+var xAxis = svg.append("g").call(xAxisGen)
+        .attr("class","axis")
+        .attr("transform", "translate(0," + yScale(yMin) + ")");
+
+
+</script>
+
+
+</body>
+</html>
