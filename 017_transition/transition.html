@@ -142,11 +142,11 @@ var tooltip = createTooltip();
 chartLayer.selectAll("rect")
         .data(data)
         .enter()
-        .append("rect")
+            .append("rect")
             .attr("x", function(d){ return xScale(d.key) - xWidth/2 ; })
-            .attr("y", function(d){ return yScale(d.value); })
+            .attr("y", yScale(yMin))
             .attr("width", xWidth - 2)
-            .attr("height", function(d){ return heightScale(d.value) })
+            .attr("height", 0)
             .attr("fill", "gray")
             .on("mouseover", function(d) {
                 d3.select(this).attr("fill", "orange");
@@ -156,6 +156,10 @@ chartLayer.selectAll("rect")
                 d3.select(this).attr("fill", "gray");
                 tooltip.hide();
             })
+        .transition()
+            .duration(750)
+            .attr("height", function(d){ return heightScale(d.value) })
+            .attr("y", function(d){ return yScale(d.value); })
 ;
 
 var xAxisGen = d3.svg.axis()
