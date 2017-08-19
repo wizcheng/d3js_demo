@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../common.css" />
 </head>
 <body>
-<h3>Bar - No Scale</h3>
+<h3>Bar - Scale</h3>
 
 <div id="output">
 </div>
@@ -36,34 +36,28 @@ var svg = d3.select("#output")
             .attr("height", h)
             .style("background-color", "#eeeeee");
 
-svg.selectAll("rect")
-        .data(data)
-        .enter()
-        .append("rect")
-        .attr("x", function(d){ return d.key * 11; })
-        .attr("y", function(d){ return h - d.value * 10; })
-        .attr("width", 10)
-        .attr("height", function(d){ return d.value * 10 })
-        .attr("fill", "gray")
-
 var xMin = d3.min(data, function(d){ return d.key; });
 var xMax = d3.max(data, function(d){ return d.key; });
 var xWidth = w / data.length;
-console.log("xWidth", xWidth);
+var xScale = d3.scale.linear()
+        .domain([xMin, xMax])
+        .range([0, w - xWidth]);
 
 var yMin = 0;
 var yMax = d3.max(data, function(d){ return d.value; });
+var yScale = d3.scale.linear()
+        .domain([yMin, yMax])
+        .range([0, h]);
 
 svg.selectAll("rect")
         .data(data)
         .enter()
         .append("rect")
-        .attr("x", function(d){ return (d.key - 1) * xWidth ; })
-        .attr("y", function(d){ return h - ( d.value / yMax ) * h; })
+        .attr("x", function(d){ return xScale(d.key) ; })
+        .attr("y", function(d){ return h - yScale(d.value); })
         .attr("width", xWidth - 2)
-        .attr("height", function(d){ return ( d.value / yMax ) * h })
+        .attr("height", function(d){ return yScale(d.value) })
         .attr("fill", "gray");
-
 
 
 </script>
