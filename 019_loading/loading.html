@@ -10,7 +10,7 @@
 <style>
 </style>
 <body>
-<h3>Transition - Exit</h3>
+<h3>Loading</h3>
 
 <div id="output">
 </div>
@@ -57,7 +57,7 @@ var dataUpdated = [
     { key: 10, value: 2}
 ];
 
-function createChart(data){
+function createChart(data, fieldX, fieldY){
 
     var w = 500;
     var h = 200;
@@ -70,15 +70,15 @@ function createChart(data){
 
     var padding = 50;
 
-    var xMin = d3.min(data, function(d){ return d.key; });
-    var xMax = d3.max(data, function(d){ return d.key; });
+    var xMin = d3.min(data, function(d){ return d[fieldX]; });
+    var xMax = d3.max(data, function(d){ return d[fieldX]; });
     var xWidth = (w - 2 * padding) / data.length;
     var xScale = d3.scaleLinear()
             .domain([xMin, xMax])
             .range([padding, w - xWidth - padding]);
 
     var yMin = 0;
-    var yMax = d3.max(data, function(d){ return d.value; });
+    var yMax = d3.max(data, function(d){ return d[fieldY]; });
     var yScale = d3.scaleLinear()
             .domain([yMin, yMax])
             .range([h-padding, padding]);
@@ -99,45 +99,81 @@ function createChart(data){
     var yAxisGen = d3
             .axisLeft().scale(yScale).ticks(5);
 
-    var padding = 10;
-
     var yAxis = svg.append("g").call(yAxisGen)
-            .attr("class", "axis")
+            .attr("class", "y axis")
             .attr("transform", "translate(" + (xScale(xMin) - xWidth/2) + ", 0)");
 
     var xAxis = svg.append("g").call(xAxisGen)
-            .attr("class","axis")
+            .attr("class","x axis")
             .attr("transform", "translate(0," + yScale(yMin) + ")");
 
     function updateChart(data){
 
-        var allRect = chartLayer.selectAll("rect")
+        var xMin = d3.min(data, function(d){ return d[fieldX]; });
+        var xMax = d3.max(data, function(d){ return d[fieldX]; });
+        var xWidth = (w - 2 * padding) / data.length;
+        var xScale = d3.scaleLinear()
+                .domain([xMin, xMax])
+                .range([padding, w - xWidth - padding]);
+
+        var yMin = 0;
+        var yMax = d3.max(data, function(d){ return d[fieldY]; });
+        var yScale = d3.scaleLinear()
+                .domain([yMin, yMax])
+                .range([h-padding, padding]);
+        var heightScale = d3.scaleLinear()
+                .domain([yMin, yMax])
+                .range([0, h - 2*padding]);
+
+        var xAxisGen = d3
+                .axisBottom().scale(xScale);
+
+        var yAxisGen = d3
+                .axisLeft().scale(yScale).ticks(5);
+
+
+        var t = d3.transition()
+                .duration(750)
+                .ease(d3.easeElastic);
+
+        d3.selectAll(".y.axis")
+                .call(yAxisGen)
+                .transition(t)
+                .attr("transform", "translate(" + (xScale(xMin) - xWidth/2) + ", 0)");
+
+        d3.selectAll(".x.axis").call(xAxisGen)
+                .attr("transform", "translate(0," + yScale(yMin) + ")");
+
+        var updateRect = chartLayer.selectAll("rect")
                 .data(data);
 
-        var newRect = allRect
+        var newRect = updateRect
                 .enter()
                     .append("rect")
-                    .attr("x", function(d){ return xScale(d.key) - xWidth/2 ; })
+                    .attr("x", function(d){ return xScale(d[fieldX]) - xWidth/2 ; })
                     .attr("y", yScale(yMin))
                     .attr("width", xWidth - 2)
                     .attr("height", 0)
                     .attr("fill", "gray")
                     .on("mouseover", function(d) {
                         d3.select(this).attr("fill", "orange");
-                        tooltip.show(d.value, xScale(d.key), yScale(d.value))
+                        tooltip.show(d[fieldY], xScale(d[fieldX]), yScale(d[fieldY]))
                     })
                     .on("mouseout", function(d) {
                         d3.select(this).attr("fill", "gray");
                         tooltip.hide();
                     });
 
-        allRect
-                .transition()
-                .duration(750)
-                .ease(d3.easeElastic)
-                    .attr("height", function(d){ return heightScale(d.value) })
-                    .attr("y", function(d){ return yScale(d.value); })
-        ;
+        newRect.merge(updateRect)
+                .transition(t)
+                    .attr("y", function(d){ return yScale(d[fieldY]); })
+                    .attr("height", function(d){ return heightScale(d[fieldY]) })
+                    .attr("x", function(d){ return xScale(d[fieldX]) - xWidth/2 ; })
+                    .attr("width", xWidth - 2);
+
+        updateRect
+                .exit()
+                .remove();
     }
 
     return {
@@ -147,7 +183,7 @@ function createChart(data){
 
 }
 
-var chart = createChart(data)
+var chart = createChart(data, "key", "value");
 
 setInterval(function () {
     var numberOfData = getRandomIntInclusive(8, 12);
@@ -156,6 +192,10 @@ setInterval(function () {
     chart.update(randomData);
 }, 1000);
 
+//d3.csv("../AAPL.csv", function(a, b) {
+//    console.log("a", a);
+//    console.log("b", b);
+//})
 
 
 </script>
