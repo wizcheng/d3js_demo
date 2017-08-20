@@ -19,13 +19,13 @@ var brush = d3.brush()
         .on("end", brushended);
 function brushed() {
     var s = d3.event.selection;
+    console.log(s);
     //...
 }
 function brushended() {
-    console.log(d3.event.selection);
-    alert(JSON.stringify(d3.event.selection));
     if (!d3.event.selection) {
-        console.log(d3.event.selection);
+        console.log("cancelled")
+        // cancel brush
     }
 }
 

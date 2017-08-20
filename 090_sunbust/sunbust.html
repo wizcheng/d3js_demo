@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>d3.js</title>
+    <script src="../common/js/d3.v4.min.js"></script>
+    <link rel="stylesheet" href="../common.css" />
+</head>
+<body>
+<h3>Sunbust - Arc</h3>
+
+<div id="output">
+</div>
+
+<script>
+
+var w = 300;
+var h = 200;
+var svg = d3.select("#output")
+    .append("svg")
+    .attr("width", w)
+    .attr("height", h)
+    .style("background-color", "#eeeeee");
+
+var arc = d3.arc()
+        .startAngle(function (d) { return d.x0 })
+        .endAngle(function (d) { return d.x1 })
+        .innerRadius(function (d) { return d.y0 })
+        .outerRadius(function (d) { return d.y1 });
+
+var data = [
+    {
+        x0: 0,
+        x1: Math.PI / 3 * 2,
+        y0: 30,
+        y1: 60,
+    }
+];
+
+console.log(arc(data));
+
+svg.append("path")
+        .attr("d", arc(data[0]))
+        .attr("fill", "steelblue")
+        .attr("transform", "translate("+w/2+","+h/2+")");
+
+
+
+</script>
+
+
+</body>
+</html>

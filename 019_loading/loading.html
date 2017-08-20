@@ -17,6 +17,21 @@
 
 <script>
 
+
+function findClosestValue(data, field, valueToFind){
+    var i;
+    var find = -1;
+    for(i=0; i<data.length; i++){
+        if (data[i][field] <= valueToFind){
+            find = i;
+        }
+    }
+    if (find>=0){
+        return data[find];
+    }
+    return null;
+}
+
 function getRandomIntInclusive(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -98,6 +113,41 @@ function createChart(data, fieldX, fieldY){
 
     var tooltip = createTooltip(tooltipLayer);
 
+    var input = data;
+
+    tooltipLayer.append("g")
+            .append("rect")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", w)
+            .attr("height", h)
+            .style("opacity", 0)
+            .on("mousemove", function(d){
+                var x = xScale.invert(d3.event.offsetX);
+                var xMin = xScale.domain()[0];
+                var xMax = xScale.domain()[1];
+
+                var y = yScale.invert(d3.event.offsetY);
+                var yMin = yScale.domain()[0];
+                var yMax = yScale.domain()[1];
+                if (y>yMax || y<yMin){
+                    tooltip.hide();
+                    return;
+                }
+
+
+                if (xMin <= x && x <= xMax){
+                    var closestItem = findClosestValue(input, fieldX, x);
+                    if (closestItem) {
+                        tooltip.show(valueFormat(closestItem[fieldY]), xScale(closestItem[fieldX]), yScale(closestItem[fieldY]))
+                        return;
+                    }
+                }
+
+                tooltip.hide();
+
+            });
+
     var lineFn = d3.line()
             .x(function(d){ return xScale(d[fieldX]); })
             .y(function(d){ return yScale(d[fieldY]); });
@@ -108,14 +158,17 @@ function createChart(data, fieldX, fieldY){
             .attr("stroke", "steelblue")
             .attr("stroke-width", 3)
             .attr("d", lineFn([]));
-    updateChart(data);
 
     var xAxisGen = d3
-            .axisBottom().scale(xScale)
+            .axisBottom()
+            .scale(xScale)
+            .ticks(6)
             .tickFormat(keyFormat);
 
     var yAxisGen = d3
-            .axisLeft().scale(yScale).ticks(5);
+            .axisLeft()
+            .scale(yScale)
+            .ticks(5);
 
     var yAxis = svg.append("g").call(yAxisGen)
             .attr("class", "y axis")
@@ -124,6 +177,8 @@ function createChart(data, fieldX, fieldY){
     var xAxis = svg.append("g").call(xAxisGen)
             .attr("class","x axis")
             .attr("transform", "translate(0," + yScale(yMin) + ")");
+
+    updateChart(data);
 
     function updateChart(data){
 
@@ -143,56 +198,31 @@ function createChart(data, fieldX, fieldY){
                 .domain([yMin, yMax])
                 .range([0, h - 2*padding]);
 
-        var xAxisGen = d3
-                .axisBottom().scale(xScale).ticks(10);
-
-        var yAxisGen = d3
-                .axisLeft().scale(yScale).ticks(5);
+//        var xAxisGen = d3
+//                .axisBottom().scale(xScale).ticks(10);
+//
+//        var yAxisGen = d3
+//                .axisLeft().scale(yScale).ticks(5);
 
 
         var t = d3.transition()
                 .duration(750)
                 .ease(d3.easeElastic);
 
-        d3.selectAll(".y.axis")
+        svg.selectAll(".y.axis")
                 .call(yAxisGen)
                 .transition(t)
-//                .attr("transform", "translate(" + (xScale(xMin) - xWidth/2) + ", 0)");
+                .attr("transform", "translate(" + (xScale(xMin) - xWidth/2) + ", 0)");
 
-        d3.selectAll(".x.axis").call(xAxisGen)
+        svg.selectAll(".x.axis")
+                .call(xAxisGen)
+                .transition(t)
                 .attr("transform", "translate(0," + yScale(yMin) + ")");
 
         line
                 .transition(t)
                 .attr("d", lineFn(data));
 
-        var updateRect = chartBackLayer.selectAll("rect")
-                .data(data);
-
-        var newRect = updateRect
-                .enter()
-                .append("rect")
-                .attr("x", function(d){ return xScale(d[fieldX]) - xWidth/2 ; })
-                .attr("y", yScale(yMin))
-                .attr("width", xWidth)
-                .attr("height", 0)
-                .attr("fill", "#eeeeee")
-                .on("mouseover", function(d) {
-                    tooltip.show(valueFormat(d[fieldY]), xScale(d[fieldX]), yScale(d[fieldY]))
-                })
-                .on("mouseout", function(d) {
-                    tooltip.hide();
-                });
-
-        newRect.merge(updateRect)
-                .attr("y", function(d){ return yScale(d[fieldY]); })
-                .attr("height", function(d){ return heightScale(d[fieldY]) })
-                .attr("x", function(d){ return xScale(d[fieldX]) - xWidth/2 ; })
-                .attr("width", xWidth);
-
-        updateRect
-                .exit()
-                .remove();
     }
 
     return {
