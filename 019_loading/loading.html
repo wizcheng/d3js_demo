@@ -10,7 +10,7 @@
 <style>
 </style>
 <body>
-<h3>Loading</h3>
+<h3>D3 Data Loading</h3>
 
 <div id="output">
 </div>
@@ -26,7 +26,7 @@ function getRandomIntInclusive(min, max) {
 function getRandomData(numberOfData, min, max){
     var result = [], i;
     for (i=1; i<=numberOfData; i++){
-        result.push({key: i, value: getRandomIntInclusive(min, max)});
+        result.push({key: new Date("2017-01-"+i), value: getRandomIntInclusive(min, max)});
     }
     return result;
 }
@@ -60,7 +60,7 @@ var dataUpdated = [
 function createChart(data, fieldX, fieldY){
 
     var w = 500;
-    var h = 200;
+    var h = 250;
 
     var svg = d3.select("#output")
             .append("svg")
@@ -70,14 +70,20 @@ function createChart(data, fieldX, fieldY){
 
     var padding = 50;
 
+    var valueFormat = d3.format(",.1f");
+    var keyFormat = d3.timeFormat("%b-%y");
+
     var xMin = d3.min(data, function(d){ return d[fieldX]; });
     var xMax = d3.max(data, function(d){ return d[fieldX]; });
     var xWidth = (w - 2 * padding) / data.length;
-    var xScale = d3.scaleLinear()
+    var xScale = d3.scaleTime()
             .domain([xMin, xMax])
             .range([padding, w - xWidth - padding]);
 
-    var yMin = 0;
+    console.log("xMin", xMin);
+    console.log("xMax", xMax);
+
+    var yMin = d3.min(data, function(d){ return d[fieldY]; }) * 0.9;
     var yMax = d3.max(data, function(d){ return d[fieldY]; });
     var yScale = d3.scaleLinear()
             .domain([yMin, yMax])
@@ -86,15 +92,27 @@ function createChart(data, fieldX, fieldY){
             .domain([yMin, yMax])
             .range([0, h - 2*padding]);
 
+    var chartBackLayer = svg.append("g");
     var chartLayer = svg.append("g");
     var tooltipLayer = svg.append("g");
 
     var tooltip = createTooltip(tooltipLayer);
 
+    var lineFn = d3.line()
+            .x(function(d){ return xScale(d[fieldX]); })
+            .y(function(d){ return yScale(d[fieldY]); });
+
+    var line = chartLayer
+            .append("path")
+            .attr("fill", "none")
+            .attr("stroke", "steelblue")
+            .attr("stroke-width", 3)
+            .attr("d", lineFn([]));
     updateChart(data);
 
     var xAxisGen = d3
-            .axisBottom().scale(xScale);
+            .axisBottom().scale(xScale)
+            .tickFormat(keyFormat);
 
     var yAxisGen = d3
             .axisLeft().scale(yScale).ticks(5);
@@ -112,21 +130,21 @@ function createChart(data, fieldX, fieldY){
         var xMin = d3.min(data, function(d){ return d[fieldX]; });
         var xMax = d3.max(data, function(d){ return d[fieldX]; });
         var xWidth = (w - 2 * padding) / data.length;
-        var xScale = d3.scaleLinear()
+        xScale
                 .domain([xMin, xMax])
                 .range([padding, w - xWidth - padding]);
 
-        var yMin = 0;
+        var yMin = d3.min(data, function(d){ return d[fieldY]; }) * 0.9;
         var yMax = d3.max(data, function(d){ return d[fieldY]; });
-        var yScale = d3.scaleLinear()
+        yScale
                 .domain([yMin, yMax])
                 .range([h-padding, padding]);
-        var heightScale = d3.scaleLinear()
+        heightScale
                 .domain([yMin, yMax])
                 .range([0, h - 2*padding]);
 
         var xAxisGen = d3
-                .axisBottom().scale(xScale);
+                .axisBottom().scale(xScale).ticks(10);
 
         var yAxisGen = d3
                 .axisLeft().scale(yScale).ticks(5);
@@ -139,37 +157,38 @@ function createChart(data, fieldX, fieldY){
         d3.selectAll(".y.axis")
                 .call(yAxisGen)
                 .transition(t)
-                .attr("transform", "translate(" + (xScale(xMin) - xWidth/2) + ", 0)");
+//                .attr("transform", "translate(" + (xScale(xMin) - xWidth/2) + ", 0)");
 
         d3.selectAll(".x.axis").call(xAxisGen)
                 .attr("transform", "translate(0," + yScale(yMin) + ")");
 
-        var updateRect = chartLayer.selectAll("rect")
+        line
+                .transition(t)
+                .attr("d", lineFn(data));
+
+        var updateRect = chartBackLayer.selectAll("rect")
                 .data(data);
 
         var newRect = updateRect
                 .enter()
-                    .append("rect")
-                    .attr("x", function(d){ return xScale(d[fieldX]) - xWidth/2 ; })
-                    .attr("y", yScale(yMin))
-                    .attr("width", xWidth - 2)
-                    .attr("height", 0)
-                    .attr("fill", "gray")
-                    .on("mouseover", function(d) {
-                        d3.select(this).attr("fill", "orange");
-                        tooltip.show(d[fieldY], xScale(d[fieldX]), yScale(d[fieldY]))
-                    })
-                    .on("mouseout", function(d) {
-                        d3.select(this).attr("fill", "gray");
-                        tooltip.hide();
-                    });
+                .append("rect")
+                .attr("x", function(d){ return xScale(d[fieldX]) - xWidth/2 ; })
+                .attr("y", yScale(yMin))
+                .attr("width", xWidth)
+                .attr("height", 0)
+                .attr("fill", "#eeeeee")
+                .on("mouseover", function(d) {
+                    tooltip.show(valueFormat(d[fieldY]), xScale(d[fieldX]), yScale(d[fieldY]))
+                })
+                .on("mouseout", function(d) {
+                    tooltip.hide();
+                });
 
         newRect.merge(updateRect)
-                .transition(t)
-                    .attr("y", function(d){ return yScale(d[fieldY]); })
-                    .attr("height", function(d){ return heightScale(d[fieldY]) })
-                    .attr("x", function(d){ return xScale(d[fieldX]) - xWidth/2 ; })
-                    .attr("width", xWidth - 2);
+                .attr("y", function(d){ return yScale(d[fieldY]); })
+                .attr("height", function(d){ return heightScale(d[fieldY]) })
+                .attr("x", function(d){ return xScale(d[fieldX]) - xWidth/2 ; })
+                .attr("width", xWidth);
 
         updateRect
                 .exit()
@@ -183,19 +202,22 @@ function createChart(data, fieldX, fieldY){
 
 }
 
-var chart = createChart(data, "key", "value");
+//var chart = createChart(getRandomData(10, 2, 13), "key", "value");
 
-setInterval(function () {
-    var numberOfData = getRandomIntInclusive(8, 12);
-    var randomData = getRandomData(numberOfData, 2, 13);
-    console.log("trigger data update", randomData);
-    chart.update(randomData);
-}, 1000);
+//setInterval(function () {
+//    var numberOfData = getRandomIntInclusive(8, 12);
+//    var randomData = getRandomData(numberOfData, 2, 13);
+////    console.log("trigger data update", randomData);
+//    chart.update(randomData);
+//}, 1000);
 
-//d3.csv("../AAPL.csv", function(a, b) {
-//    console.log("a", a);
-//    console.log("b", b);
-//})
+d3.csv("../AAPL.csv", function(err, data) {
+    console.log(data);
+    data = data.map(function(d){ d.DateParsed = new Date(d.Date); return d; });
+    console.log(data);
+    var chart = createChart(data, "DateParsed", "Adj Close")
+
+})
 
 
 </script>

@@ -3,7 +3,7 @@ function createTooltip(layer) {
     var tooltip = layer.append("g");
 
     var tooltipHeight = 18;
-    var tooltipWidth = 34;
+    var tooltipWidth = 40;
     var tooltipTipSize = 7;
     var tooltipBackgroundPos = [
         [0, 0],
@@ -35,7 +35,7 @@ function createTooltip(layer) {
 
     var showTooltip = function(text, x, y){
         tooltip
-            .attr("transform", "translate(" + x + "," + ( y - 5) + ")")
+            .attr("transform", "translate(" + x + "," + ( y - 10) + ")")
             .style("display", "block");
         tooltipText.text(text);
     };

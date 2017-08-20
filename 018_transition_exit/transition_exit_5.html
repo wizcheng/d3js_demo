@@ -112,18 +112,18 @@ function createChart(data){
         var xMin = d3.min(data, function(d){ return d.key; });
         var xMax = d3.max(data, function(d){ return d.key; });
         var xWidth = (w - 2 * padding) / data.length;
-        var xScale = d3.scaleLinear()
-                .domain([xMin, xMax])
-                .range([padding, w - xWidth - padding]);
+        xScale
+            .domain([xMin, xMax])
+            .range([padding, w - xWidth - padding]);
 
         var yMin = 0;
         var yMax = d3.max(data, function(d){ return d.value; });
-        var yScale = d3.scaleLinear()
-                .domain([yMin, yMax])
-                .range([h-padding, padding]);
-        var heightScale = d3.scaleLinear()
-                .domain([yMin, yMax])
-                .range([0, h - 2*padding]);
+        yScale
+            .domain([yMin, yMax])
+            .range([h-padding, padding]);
+        heightScale
+            .domain([yMin, yMax])
+            .range([0, h - 2*padding]);
 
         var xAxisGen = d3
                 .axisBottom().scale(xScale);
