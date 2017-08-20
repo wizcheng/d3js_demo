@@ -3,22 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>d3.js</title>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+    <script src="../common/js/d3.v4.min.js"></script>
     <link rel="stylesheet" href="../common.css" />
 </head>
 <style>
-    .axis path,
-    .axis line {
-        fill: none;
-        stroke: black;
-        shape-rendering: crispEdges;
-    }
-
-    .axis text {
-        font-family: sans-serif;
-        font-size: 10px;
-    }
-
 </style>
 <body>
 <h3>Transition Exit - working ... except axis</h3>
@@ -88,7 +76,7 @@ function createTooltip(layer) {
         [tooltipWidth/2-tooltipTipSize, tooltipHeight],
         [0, tooltipHeight]
     ];
-    var tooltipLine = d3.svg.line()
+    var tooltipLine = d3.line()
             .x(function(d){ return d[0] - tooltipWidth/2 })
             .y(function(d){ return d[1] - tooltipHeight - tooltipTipSize });
 
@@ -148,16 +136,16 @@ function createChart(data){
     var xMin = d3.min(data, function(d){ return d.key; });
     var xMax = d3.max(data, function(d){ return d.key; });
     var xWidth = (w - 2 * padding) / data.length;
-    var xScale = d3.scale.linear()
+    var xScale = d3.scaleLinear()
             .domain([xMin, xMax])
             .range([padding, w - xWidth - padding]);
 
     var yMin = 0;
     var yMax = d3.max(data, function(d){ return d.value; });
-    var yScale = d3.scale.linear()
+    var yScale = d3.scaleLinear()
             .domain([yMin, yMax])
             .range([h-padding, padding]);
-    var heightScale = d3.scale.linear()
+    var heightScale = d3.scaleLinear()
             .domain([yMin, yMax])
             .range([0, h - 2*padding]);
 
@@ -168,11 +156,11 @@ function createChart(data){
 
     updateChart(data);
 
-    var xAxisGen = d3.svg.axis()
-            .scale(xScale).orient("bottom");
+    var xAxisGen = d3
+            .axisBottom().scale(xScale);
 
-    var yAxisGen = d3.svg.axis()
-            .scale(yScale).orient("left").ticks(4);
+    var yAxisGen = d3
+            .axisLeft().scale(yScale).ticks(5);
 
     var yAxis = svg.append("g").call(yAxisGen)
             .attr("class", "axis")
@@ -187,16 +175,16 @@ function createChart(data){
         var xMin = d3.min(data, function(d){ return d.key; });
         var xMax = d3.max(data, function(d){ return d.key; });
         var xWidth = (w - 2 * padding) / data.length;
-        var xScale = d3.scale.linear()
+        var xScale = d3.scaleLinear()
                 .domain([xMin, xMax])
                 .range([padding, w - xWidth - padding]);
 
         var yMin = 0;
         var yMax = d3.max(data, function(d){ return d.value; });
-        var yScale = d3.scale.linear()
+        var yScale = d3.scaleLinear()
                 .domain([yMin, yMax])
                 .range([h-padding, padding]);
-        var heightScale = d3.scale.linear()
+        var heightScale = d3.scaleLinear()
                 .domain([yMin, yMax])
                 .range([0, h - 2*padding]);
 
@@ -227,7 +215,7 @@ function createChart(data){
         allRect
                 .transition()
                 .duration(750)
-                .ease("elastic-in")
+                .ease(d3.easeElastic)
                     .attr("y", function(d){ return yScale(d.value); })
                     .attr("height", function(d){ return heightScale(d.value) })
                     .attr("x", function(d){ return xScale(d.key) - xWidth/2 ; })

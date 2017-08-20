@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>d3.js</title>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+    <script src="../common/js/d3.v4.min.js"></script>
     <link rel="stylesheet" href="../common.css" />
 </head>
 <body>
-<h3>Bar</h3>
+<h3>Data</h3>
 
 <div id="output">
 </div>
@@ -24,24 +24,24 @@ var svg = d3.select("#output")
             .attr("width", w)
             .attr("height", h);
 
-svg.selectAll("rect")
-        .data(data)
-        .enter()
-        .append("rect")
-        .attr("x", function(d, i){ return i * 11; })
-        .attr("y", 0)
-        .attr("width", 10)
-        .attr("height", function(d){ return d * 10 })
-
 //svg.selectAll("rect")
 //        .data(data)
 //        .enter()
 //        .append("rect")
 //        .attr("x", function(d, i){ return i * 11; })
-//        .attr("y", function(d){ return h - d * 10; })
+//        .attr("y", 0)
 //        .attr("width", 10)
-//        .attr("height", function(d){ return d * 10 })
-//        .attr("fill", "gray")
+//        .attr("height", function(d){ return d * 10 });
+
+svg.selectAll("rect")
+        .data(data)
+        .enter()
+        .append("rect")
+        .attr("x", function(d, i){ return i * 11; })
+        .attr("y", function(d){ return h - d * 10; })
+        .attr("width", 10)
+        .attr("height", function(d){ return d * 10 })
+        .attr("fill", "gray")
 
 
 </script>

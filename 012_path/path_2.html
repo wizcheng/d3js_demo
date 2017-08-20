@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../common.css" />
 </head>
 <body>
-<h3>Path</h3>
+<h3>Path - Interpolate</h3>
 
 <!--<svg width="300" height="100">-->
     <!--<path d="M11,60L22,50L33,40L44,70L55,60L66,30L77,50L88,40L99,30L110,70" fill="none" stroke-width="3" stroke="gray"/>-->
@@ -44,16 +44,32 @@ var svg = d3.select("#output")
 var lineFn = d3.line()
         .x(function(d){ return d.key * 11 })
         .y(function(d){ return h - d.value * 10})
+        .curve(d3.curveLinear)
+//        .curve(d3.curveCardinal)
+//        .curve(d3.curveCardinalOpen)
+//        .curve(d3.curveStepBefore)
+//        .curve(d3.curveBasisClosed)
+//        .curve(d3.curveBasisOpen)
         ;
+
+svg.selectAll("circle")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("cx", function(d){ return d.key * 11; })
+        .attr("cy", function(d){ return h - d.value * 10; })
+        .attr("r", 4)
+        .attr("fill", "gray");
 
 svg.append("path")
         .attr("d", lineFn(data))
         .attr("fill", "none")
-        .attr("stroke-width", 3)
-        .attr("stroke", "gray");
+        .attr("stroke-width", 2)
+        .attr("stroke", "black");
 
 
 
+// ref: http://bl.ocks.org/emmasaunders/c25a147970def2b02d8c7c2719dc7502
 
 </script>
 

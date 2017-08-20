@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>d3.js</title>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+    <script src="../common/js/d3.v4.min.js"></script>
     <link rel="stylesheet" href="../common.css" />
 </head>
 <style>
@@ -61,15 +61,13 @@ function createTooltip(layer) {
         [tooltipWidth/2-tooltipTipSize, tooltipHeight],
         [0, tooltipHeight]
     ];
-    var tooltipLine = d3.svg.line()
+    var tooltipLine = d3.line()
             .x(function(d){ return d[0] - tooltipWidth/2 })
             .y(function(d){ return d[1] - tooltipHeight - tooltipTipSize });
 
     tooltip.append("path")
-            .attr({
-                "d": tooltipLine(tooltipBackgroundPos),
-                "fill": "orange"
-            });
+            .attr("d", tooltipLine(tooltipBackgroundPos))
+            .attr("fill", "orange");
 
     var tooltipText = tooltip.append("text")
             .text("hello")
@@ -85,17 +83,12 @@ function createTooltip(layer) {
     var showTooltip = function(text, x, y){
         tooltip
                 .attr("transform", "translate(" + x + "," + ( y - 5) + ")")
-                .style({
-                    "display": "block"
-                });
+                .style("display", "block");
         tooltipText.text(text);
     };
 
     var hideTooltip = function(){
-        tooltip
-                .style({
-                    "display": "none"
-                });
+        tooltip.style("display", "none");
     };
 
     return {
@@ -121,16 +114,16 @@ function createChart(data){
     var xMin = d3.min(data, function(d){ return d.key; });
     var xMax = d3.max(data, function(d){ return d.key; });
     var xWidth = (w - 2 * padding) / data.length;
-    var xScale = d3.scale.linear()
+    var xScale = d3.scaleLinear()
             .domain([xMin, xMax])
             .range([padding, w - xWidth - padding]);
 
     var yMin = 0;
     var yMax = d3.max(data, function(d){ return d.value; });
-    var yScale = d3.scale.linear()
+    var yScale = d3.scaleLinear()
             .domain([yMin, yMax])
             .range([h-padding, padding]);
-    var heightScale = d3.scale.linear()
+    var heightScale = d3.scaleLinear()
             .domain([yMin, yMax])
             .range([0, h - 2*padding]);
 
@@ -162,13 +155,11 @@ function createChart(data){
             .attr("y", function(d){ return yScale(d.value); })
     ;
 
-    var xAxisGen = d3.svg.axis()
-            .scale(xScale).orient("bottom");
+    var xAxisGen = d3
+            .axisBottom().scale(xScale);
 
-    var yAxisGen = d3.svg.axis()
-            .scale(yScale).orient("left").ticks(4);
-
-    var padding = 10;
+    var yAxisGen = d3
+            .axisLeft().scale(yScale).ticks(5);
 
     var yAxis = svg.append("g").call(yAxisGen)
             .attr("class", "axis")
