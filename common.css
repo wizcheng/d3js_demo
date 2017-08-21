@@ -1,4 +1,8 @@
+body {
+    background-color: #95a5a6;
+}
 h3 {
-    font-family: "Verdana";
-
+    font-family: "Helvetica";
+    font-weight: normal;
+    color: #ffffff;
 }
