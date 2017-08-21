@@ -228,25 +228,18 @@ function createChart(config) {
             .domain([yMin, yMax])
             .range([0, h - 2 * padding]);
 
-//        var xAxisGen = d3
-//                .axisBottom().scale(xScale).ticks(10);
-//
-//        var yAxisGen = d3
-//                .axisLeft().scale(yScale).ticks(5);
-
-
         var t = d3.transition()
             .duration(750)
             .ease(d3.easeElastic);
 
         svg.selectAll(".y.axis")
-            .call(yAxisGen)
             .transition(t)
+            .call(yAxisGen)
             .attr("transform", "translate(" + (xScale(xMin) - xWidth / 2) + ", 0)");
 
         svg.selectAll(".x.axis")
-            .call(xAxisGen)
             .transition(t)
+            .call(xAxisGen)
             .attr("transform", "translate(0," + yScale(yMin) + ")");
 
         line
