@@ -14,31 +14,38 @@
 
 <script>
 
+var svg = d3.select("#output")
+        .append("svg")
+        .attr("width", 500)
+        .attr("height", 300)
+        .style("background-color", "#eeeeee");
+
+var text = svg.append("text")
+        .attr("x", 10)
+        .attr("y", 20);
+
 var brush = d3.brush()
         .on("start brush", brushed)
         .on("end", brushended);
+
 function brushed() {
     var s = d3.event.selection;
-    console.log(s);
+    text.text(JSON.stringify(s));
     //...
 }
 function brushended() {
     if (!d3.event.selection) {
         console.log("cancelled")
-        // cancel brush
+        text.text("none")
     }
 }
-
-var svg = d3.select("#output")
-        .append("svg")
-        .attr("width", 300)
-        .attr("height", 200)
-        .style("background-color", "#eeeeee")
 
 svg.append("g")
         .attr("class", "brush")
         .call(brush)
-        .call(brush.move, [[100, 100], [120, 160]]);
+        .call(brush.move, [[100, 100], [300, 200]]);
+
+
 
 
 

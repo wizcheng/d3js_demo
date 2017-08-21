@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>d3.js</title>
     <script src="../common/js/d3.v4.min.js"></script>
+    <script src="./tooltip.js"></script>
     <link rel="stylesheet" href="../common.css" />
 </head>
 <style>
@@ -42,7 +43,7 @@ var data = [
 ];
 
 var w = 500;
-var h = 200;
+var h = 300;
 
 var svg = d3.select("#output")
             .append("svg")
@@ -71,28 +72,7 @@ var heightScale = d3.scaleLinear()
 var chartLayer = svg.append("g");
 var tooltipLayer = svg.append("g");
 
-
-var tooltipText = tooltipLayer.append("text")
-        .text("hello")
-        .attr("x", 0)
-        .attr("y", 0)
-        .style("font-family", "verdana")
-        .style("font-size", "10px")
-        .attr("text-anchor", "middle")
-        .style("display", "none")
-        ;
-
-var showTooltip = function(text, x, y){
-    tooltipText
-            .attr("transform", "translate(" + x + "," + (y-5) + ")")
-            .style("display", "block");
-    tooltipText.text(text);
-};
-
-var hideTooltip = function(){
-    tooltipText.style("display", "none");
-};
-
+var tooltip = createTooltip(tooltipLayer);
 
 chartLayer.selectAll("rect")
         .data(data)
@@ -105,11 +85,11 @@ chartLayer.selectAll("rect")
             .attr("fill", "gray")
             .on("mouseover", function(d) {
                 d3.select(this).attr("fill", "orange");
-                showTooltip(d.value, xScale(d.key), yScale(d.value))
+                tooltip.show(d.value, xScale(d.key), yScale(d.value))
             })
             .on("mouseout", function(d) {
                 d3.select(this).attr("fill", "gray");
-                hideTooltip();
+                tooltip.hide();
             })
         .transition()
             .duration(750)

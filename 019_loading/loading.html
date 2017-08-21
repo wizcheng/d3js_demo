@@ -75,7 +75,7 @@ var dataUpdated = [
 function createChart(data, fieldX, fieldY){
 
     var w = 500;
-    var h = 250;
+    var h = 300;
 
     var svg = d3.select("#output")
             .append("svg")
@@ -210,13 +210,13 @@ function createChart(data, fieldX, fieldY){
                 .ease(d3.easeElastic);
 
         svg.selectAll(".y.axis")
-                .call(yAxisGen)
                 .transition(t)
+                .call(yAxisGen)
                 .attr("transform", "translate(" + (xScale(xMin) - xWidth/2) + ", 0)");
 
         svg.selectAll(".x.axis")
-                .call(xAxisGen)
                 .transition(t)
+                .call(xAxisGen)
                 .attr("transform", "translate(0," + yScale(yMin) + ")");
 
         line

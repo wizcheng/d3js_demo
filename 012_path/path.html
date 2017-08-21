@@ -9,9 +9,9 @@
 <body>
 <h3>Path</h3>
 
-<!--<svg width="300" height="100">-->
+<svg width="500" height="300" style="background-color: #eeeeee">
     <!--<path d="M11,60L22,50L33,40L44,70L55,60L66,30L77,50L88,40L99,30L110,70" fill="none" stroke-width="3" stroke="gray"/>-->
-<!--</svg>-->
+</svg>
 
 
 <div id="output">
@@ -32,8 +32,8 @@ var data = [
     { key: 10, value: 3}
 ];
 
-var w = 300;
-var h = 100;
+var w = 500;
+var h = 300;
 
 var svg = d3.select("#output")
             .append("svg")
@@ -46,11 +46,11 @@ var lineFn = d3.line()
         .y(function(d){ return h - d.value * 10})
         ;
 
-svg.append("path")
-        .attr("d", lineFn(data))
-        .attr("fill", "none")
-        .attr("stroke-width", 3)
-        .attr("stroke", "gray");
+//svg.append("path")
+//        .attr("d", lineFn(data))
+//        .attr("fill", "none")
+//        .attr("stroke-width", 3)
+//        .attr("stroke", "gray");
 
 
 

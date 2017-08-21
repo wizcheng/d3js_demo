@@ -16,32 +16,33 @@
 
 var data = [4, 5, 6, 3, 4, 7, 5, 6, 7, 3];
 
-var w = 300;
-var h = 100;
+var w = 500;
+var h = 300;
 
 var svg = d3.select("#output")
             .append("svg")
             .attr("width", w)
-            .attr("height", h);
-
-//svg.selectAll("rect")
-//        .data(data)
-//        .enter()
-//        .append("rect")
-//        .attr("x", function(d, i){ return i * 11; })
-//        .attr("y", 0)
-//        .attr("width", 10)
-//        .attr("height", function(d){ return d * 10 });
+            .attr("height", h)
+            .style("background-color", "#eeeeee");
 
 svg.selectAll("rect")
         .data(data)
         .enter()
         .append("rect")
         .attr("x", function(d, i){ return i * 11; })
-        .attr("y", function(d){ return h - d * 10; })
+        .attr("y", 0)
         .attr("width", 10)
-        .attr("height", function(d){ return d * 10 })
-        .attr("fill", "gray")
+        .attr("height", function(d){ return d * 10 });
+
+//svg.selectAll("rect")
+//        .data(data)
+//        .enter()
+//        .append("rect")
+//        .attr("x", function(d, i){ return i * 11; })
+//        .attr("y", function(d){ return h - d * 10; })
+//        .attr("width", 10)
+//        .attr("height", function(d){ return d * 10 })
+//        .attr("fill", "gray")
 
 
 </script>

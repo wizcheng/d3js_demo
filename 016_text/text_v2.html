@@ -42,7 +42,7 @@ var data = [
 ];
 
 var w = 500;
-var h = 200;
+var h = 300;
 
 var svg = d3.select("#output")
             .append("svg")
@@ -97,10 +97,8 @@ function createTooltip() {
             .y(function(d){ return d[1] - tooltipHeight - tooltipTipSize });
 
     tooltip.append("path")
-            .attr({
-                "d": tooltipLine(tooltipBackgroundPos),
-                "fill": "orange"
-            });
+            .attr("d", tooltipLine(tooltipBackgroundPos))
+            .attr("fill", "orange");
 
     var tooltipText = tooltip.append("text")
             .text("hello")
@@ -116,17 +114,13 @@ function createTooltip() {
     var showTooltip = function(text, x, y){
         tooltip
                 .attr("transform", "translate(" + x + "," + ( y - 5) + ")")
-                .style({
-                    "display": "block"
-                });
+                .style("display", "block");
         tooltipText.text(text);
     };
 
     var hideTooltip = function(){
         tooltip
-                .style({
-                    "display": "none"
-                });
+                .style("display", "none");
     };
 
     return {

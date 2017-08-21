@@ -60,7 +60,7 @@ var dataUpdated = [
 function createChart(data){
 
     var w = 500;
-    var h = 200;
+    var h = 300;
 
     var svg = d3.select("#output")
             .append("svg")
@@ -91,10 +91,9 @@ function createChart(data){
 
     var tooltip = createTooltip(tooltipLayer);
 
-    updateChart(data);
-
     var xAxisGen = d3
-            .axisBottom().scale(xScale);
+            .axisBottom().scale(xScale)
+            .tickFormat(d3.format(",.0f"));
 
     var yAxisGen = d3
             .axisLeft().scale(yScale).ticks(5);
@@ -106,6 +105,8 @@ function createChart(data){
     var xAxis = svg.append("g").call(xAxisGen)
             .attr("class","x axis")
             .attr("transform", "translate(0," + yScale(yMin) + ")");
+
+    updateChart(data);
 
     function updateChart(data){
 
@@ -125,23 +126,18 @@ function createChart(data){
             .domain([yMin, yMax])
             .range([0, h - 2*padding]);
 
-        var xAxisGen = d3
-                .axisBottom().scale(xScale);
-
-        var yAxisGen = d3
-                .axisLeft().scale(yScale).ticks(5);
-
-
         var t = d3.transition()
                 .duration(750)
                 .ease(d3.easeElastic);
 
         d3.selectAll(".y.axis")
-                .call(yAxisGen)
                 .transition(t)
+                .call(yAxisGen)
                 .attr("transform", "translate(" + (xScale(xMin) - xWidth/2) + ", 0)");
 
-        d3.selectAll(".x.axis").call(xAxisGen)
+        d3.selectAll(".x.axis")
+                .transition(t)
+                .call(xAxisGen)
                 .attr("transform", "translate(0," + yScale(yMin) + ")");
 
         var updateRect = chartLayer.selectAll("rect")

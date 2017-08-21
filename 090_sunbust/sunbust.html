@@ -14,8 +14,8 @@
 
 <script>
 
-var w = 300;
-var h = 200;
+var w = 500;
+var h = 300;
 var svg = d3.select("#output")
     .append("svg")
     .attr("width", w)
@@ -36,8 +36,6 @@ var data = [
         y1: 60,
     }
 ];
-
-console.log(arc(data));
 
 svg.append("path")
         .attr("d", arc(data[0]))

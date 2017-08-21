@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>d3.js</title>
+    <script src="../common/js/d3.v4.min.js"></script>
+    <link rel="stylesheet" href="../common.css" />
+</head>
+<body>
+<h3>Brush</h3>
+
+<div id="output">
+</div>
+
+<script>
+
+var svg = d3.select("#output")
+        .append("svg")
+        .attr("width", 500)
+        .attr("height", 300)
+        .style("background-color", "#eeeeee");
+
+var text = svg.append("text")
+        .attr("x", 10)
+        .attr("y", 20);
+
+var graphLayer = svg.append("g");
+var brushLayer = svg.append("g");
+
+var brushX = 50;
+var brushY = 50;
+var brushWidth = 400;
+var brushHeight = 80;
+
+function brushed() {
+    var s = d3.event.selection;
+    text.text(JSON.stringify(s));
+    //...
+}
+function brushended() {
+    if (!d3.event.selection) {
+        console.log("cancelled")
+        text.text("none")
+    }
+}
+
+graphLayer.append("rect")
+        .attr("x", brushX)
+        .attr("y", brushY)
+        .attr("width", brushWidth)
+        .attr("height", brushHeight)
+        .attr("fill", "#cccccc");
+
+var brush = d3.brushX()
+        .extent([[brushX, brushY], [brushX+brushWidth, brushY+brushHeight]])
+        .on("start brush", brushed)
+        .on("end", brushended)
+
+brushLayer
+        .call(brush)
+        .style("background-color", "#dddddd")
+//        .call(brush.extent, [100, 200])
+        .call(brush.move, [100, 160]);
+
+
+</script>
+<a href="http://bl.ocks.org/tylercraft/raw/3630001/">in action</a>
+
+</body>
+</html>
