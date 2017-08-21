@@ -51,6 +51,9 @@ class App extends Component {
                     <option value="IBM">IBM</option>
                 </select>
 
+                <br/>
+                <br/>
+
                 <Line data={this.state.data} fieldX="DateParsed" fieldY="Adj Close"/>
             </div>
         );
